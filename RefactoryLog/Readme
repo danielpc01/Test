@@ -1,0 +1,21 @@
+Probar con el siguiente servicio:
+
+http://localhost:8080/RefactoryLog/tracking/saveLog
+
+POST:
+===============================================================================
+{
+	"log":{
+    "message":"ERROR IN .....",
+		"messageTypeId":2,
+  		"isFile":true,
+  		"isConsole":true,
+  		"isDatabase":true,
+      "createdBy":1
+    }  
+}
+===============================================================================
+messageTypeId => PUEDE TENER LOS SIGUIENTES VALORES: 
+1 = INFO
+2 = ERROR
+3 = WARNING
