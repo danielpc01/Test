@@ -1,0 +1,65 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:context="http://www.springframework.org/schema/context"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xmlns:aop="http://www.springframework.org/schema/aop"
+xmlns:tx="http://www.springframework.org/schema/tx"
+xmlns:beans="http://www.springframework.org/schema/beans"
+xmlns:mvc="http://www.springframework.org/schema/mvc"
+xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+                            http://www.springframework.org/schema/tx  http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+                            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+<context:annotation-config />
+<mvc:annotation-driven />
+<tx:annotation-driven transaction-manager="transactionManager"/>
+<context:component-scan base-package="refactory" />
+<context:property-placeholder location="classpath*:refactory-log.properties"/>
+
+	<!-- Configure to plugin JSON as request and response in method handler -->
+	<beans:bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+		<beans:property name="messageConverters">
+			<beans:list>
+				<beans:ref bean="jsonMessageConverter"/>
+			</beans:list>
+		</beans:property>
+	</beans:bean>
+	
+	<!-- Configure bean to convert JSON to POJO and vice versa -->
+	<beans:bean id="jsonMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+	</beans:bean>
+	
+	<bean id="JDBCDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource" >
+   		<property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+   		<property name="url" value="jdbc:mysql://localhost:3306/tracking"/>
+   		<property name="username" value="root"/>
+   		<property name="password" value="mysql"/>
+    </bean>
+    
+    <bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" >
+				<property name="showSql" value="true" />
+           		<property name="generateDdl" value="true" />
+           		<property name="databasePlatform" value="org.hibernate.dialect.HSQLDialect" />
+			</bean>
+		</property>
+		<property name="dataSource" ref="JDBCDataSource" />
+		<property name="persistenceUnitName" value="persistenceUnit"/> 
+	</bean>
+	
+	<bean name="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="dataSource" ref="JDBCDataSource" />
+		<property name="entityManagerFactory" ref="entityManagerFactory" />		
+	</bean>
+	
+	
+	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+	
+	<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
+	
+	<bean id="jdbcTemplateTracking" class="org.springframework.jdbc.core.JdbcTemplate">
+	  <property name="dataSource"  ref="JDBCDataSource"/>
+	</bean>
+</beans>
