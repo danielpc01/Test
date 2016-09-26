@@ -1,6 +1,7 @@
 package refactory.business.impl;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -61,15 +62,16 @@ public class LogTrackingBusinessImpl implements LogTrackingBusiness{
 		
 		// CUSTOM THE MESSAGE
 		StringBuilder sbMessage=new StringBuilder();
+		SimpleDateFormat sdFormat= new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		ConstantDTO messageConst=constantDAO.getConstant(
 				String.valueOf(logTracking.getMessageTypeId()), 
 				Long.parseLong(ConstantFatherEnum.LOG_TYPE.getValue1()));
 		
 		sbMessage.
 		append(messageConst.getValue2()).
-		append(" ").
-		append(DateFormat.getDateInstance(DateFormat.LONG).format(new Date())).
-		append(" ").
+		append(": ").
+		append(sdFormat.format(new Date())).
+		append(", ").
 		append(logTracking.getMessage());
 		
 		if(isConsole){
